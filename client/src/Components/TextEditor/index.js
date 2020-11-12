@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import UserContext from '../../Context/UserContext';
 import API from '../../utils/API';
 import { Editor } from 'react-draft-wysiwyg';
-import { convertFromRaw } from 'draft-js';
+import { convertFromRaw, EditorState } from 'draft-js';
 import Input from '../EditorTitle';
 import FormBtn from '../FormBtn';
 // import DatePickers from '../DatePicker';
@@ -54,6 +54,7 @@ export default function EditorConvertToJSON() {
 	// Initial States
 	const [title, setTitle] = useState('');
 	const [contentState, setContentState] = useState(content);
+	const [editorState, setEditorState] = useState(EditorState.createWithContent(content));
 	const [date, setDate] = useState(today);
 	//convertFromRaw(content);
 	console.log(contentState);
@@ -81,8 +82,10 @@ export default function EditorConvertToJSON() {
 		// console.log(contentState);
 		console.log(journalEntryCheck.data);
 		setTitle(journalEntryCheck.data.title);
-		setContentState(
-			convertFromRaw(journalEntryCheck.data.body));
+		const contentState = convertFromRaw(journalEntryCheck.data.body);
+		const editorState = EditorState.createWithContent(contentState);
+		setContentState(contentState);
+		setEditorState(editorState);
 		console.log(journalEntryCheck.data.body);
 		// console.log(journalEntryCheck.data.body);
 		console.log(contentState);
@@ -164,6 +167,7 @@ export default function EditorConvertToJSON() {
 					toolbarClassName="toolbar-class"
 					// contentState={contentState}
 					// value={contentState}
+					editorState={editorState}
 					onContentStateChange={(contentState) =>
 						setContentState(contentState)
 					}
